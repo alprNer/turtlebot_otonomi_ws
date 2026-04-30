@@ -1,0 +1,13 @@
+<launch>
+  <!-- 1. Gazebo -->
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/>
+
+  <!-- 2. SLAM ve RViz -->
+  <include file="$(find turtlebot3_slam)/launch/turtlebot3_slam.launch">
+    <arg name="slam_methods" value="gmapping"/>
+  </include>
+
+  <!-- 3. Otonom Düğümler -->
+  <node pkg="turtlebot_otonomi" type="kasif_node" name="kasif_node" launch-prefix="bash -c 'sleep 5; $0 $@' "/>
+  <node pkg="turtlebot_otonomi" type="otonom_beyin" name="otonom_beyin_node" output="screen" launch-prefix="bash -c 'sleep 7; $0 $@' "/>
+</launch>

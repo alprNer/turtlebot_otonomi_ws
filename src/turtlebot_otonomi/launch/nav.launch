@@ -1,0 +1,30 @@
+<launch>
+  <!-- 1. Gazebo'yu Aç -->
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/>
+
+  <!-- 2. Robotun Gövde Modelini ve TF'lerini Başlat -->
+  <include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch">
+    <arg name="model" value="$(env TURTLEBOT3_MODEL)" />
+  </include>
+
+  <!-- 3. Harita Sunucusu  -->
+  <node pkg="map_server" name="map_server" type="map_server" args="$(env HOME)/benim_haritam.yaml"/>
+
+  <!-- 4. AMCL  -->
+  <include file="$(find turtlebot3_navigation)/launch/amcl.launch">
+    <arg name="initial_pose_x" value="-2.0"/>
+    <arg name="initial_pose_y" value="-0.5"/>
+    <arg name="initial_pose_a" value="0.0"/>
+  </include>
+
+  <!-- 5. Move Base -->
+  <include file="$(find turtlebot3_navigation)/launch/move_base.launch">
+    <arg name="model" value="$(env TURTLEBOT3_MODEL)" />
+  </include>
+
+  <!-- 6. RViz -->
+  <node pkg="rviz" type="rviz" name="rviz" required="true" args="-d $(find turtlebot3_navigation)/rviz/turtlebot3_navigation.rviz"/>
+
+  <!-- 7. Görev Düğümü (Sistemin uyanması için 10 saniye bekler) -->
+  <node pkg="turtlebot_otonomi" type="nav_hedef" name="nav_hedef_node" output="screen" launch-prefix="bash -c 'sleep 10; $0 $@' "/>
+</launch>
